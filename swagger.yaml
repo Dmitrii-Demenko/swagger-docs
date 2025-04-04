@@ -1,24 +1,24 @@
 openapi: 3.0.0
 info:
-  title: API генерации видео с аватарами
-  description: API для генерации видео с аватарами и проверки статуса генерации
+  title: Video Generation API
+  description: API documentation for avatar video generation services
   version: 1.0.0
 servers:
   - url: https://api.runpod.ai/v2/{serviceId}
     variables:
       serviceId:
         default: serviceId
-        description: ID сервиса для второго генератора видео (заменить на актуальный ID)
+        description: Service ID
   - url: https://api.runpod.ai/v2/{serviceId}
     variables:
       serviceId:
         default: serviceId
-        description: ID сервиса для первого генератора видео (заменить на актуальный ID)
+        description: ID сервиса для Генератора 1
 paths:
   /run:
     post:
-      summary: Запрос на генерацию видео (Генератор 2)
-      description: Отправляет запрос на генерацию видео с выбранным аватаром и текстом через второй генератор
+      summary: Generate Video (Generator 2)
+      description: Generate a video with selected avatar
       security:
         - BearerAuth: []
       requestBody:
@@ -37,20 +37,20 @@ paths:
                     avatar:
                       type: string
                       enum: [irina, ann, malyshko, ksenija]
-                      description: Тип аватара для использования в видео
+                      description: Avatar type
                     text:
                       type: string
-                      description: Текст, который будет произнесен аватаром
+                      description: Text to be spoken
                     format:
                       type: string
                       enum: [mp4, webm, mov]
                       default: mp4
-                      description: Формат выходного видео
+                      description: Output video format
                     response_format:
                       type: string
                       enum: [url, base64]
                       default: url
-                      description: Формат ответа (URL или Base64)
+                      description: Response format
               required:
                 - input
             examples:
@@ -58,12 +58,12 @@ paths:
                 value:
                   input:
                     avatar: irina
-                    text: Привет это тестовый запрос для того что бы проверить работоспособность сервера
+                    text: Hello, this is a test request to check server functionality
                     response_format: url
                     format: mov
       responses:
         '200':
-          description: Успешный запрос на генерацию видео
+          description: Successful video generation request
           content:
             application/json:
               schema:
@@ -71,11 +71,11 @@ paths:
                 properties:
                   id:
                     type: string
-                    description: Идентификатор задачи
+                    description: Task ID
                   status:
                     type: string
                     enum: [IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED]
-                    description: Статус выполнения задачи
+                    description: Task status
               examples:
                 example1:
                   value:
@@ -83,8 +83,8 @@ paths:
                     status: IN_QUEUE
   /run-generator1:
     post:
-      summary: Запрос на генерацию видео (Генератор 1)
-      description: Отправляет запрос на генерацию видео с выбранным аватаром, текстом и голосом через первый генератор
+      summary: Generate Video (Generator 1)
+      description: Generate a video with voice customization
       security:
         - BearerAuth: []
       requestBody:
@@ -103,23 +103,23 @@ paths:
                     avatar:
                       type: string
                       enum: [ann]
-                      description: Тип аватара для использования в видео
+                      description: Avatar type
                     text:
                       type: string
-                      description: Текст, который будет произнесен аватаром
+                      description: Text to be spoken
                     format:
                       type: string
                       enum: [mp4]
                       default: mp4
-                      description: Формат выходного видео
+                      description: Output video format
                     response_format:
                       type: string
                       enum: [url, base64]
                       default: base64
-                      description: Формат ответа (URL или Base64)
+                      description: Response format
                     voice:
                       type: string
-                      description: Идентификатор голоса для озвучивания (например, XB0fDUnXU5powFXDhCwa)
+                      description: Voice ID
               required:
                 - input
             examples:
@@ -127,13 +127,13 @@ paths:
                 value:
                   input:
                     avatar: ann
-                    text: Ваш текст для озвучивания
+                    text: Your text to be spoken
                     response_format: base64
                     format: mp4
                     voice: voice_id
       responses:
         '200':
-          description: Успешный запрос на генерацию видео
+          description: Successful video generation request
           content:
             application/json:
               schema:
@@ -141,11 +141,11 @@ paths:
                 properties:
                   id:
                     type: string
-                    description: Идентификатор задачи
+                    description: Task ID
                   status:
                     type: string
                     enum: [IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED]
-                    description: Статус выполнения задачи
+                    description: Task status
               examples:
                 example1:
                   value:
@@ -153,8 +153,8 @@ paths:
                     status: IN_QUEUE
   /status/{taskId}:
     get:
-      summary: Проверка статуса генерации видео
-      description: Получает текущий статус задачи по её идентификатору (работает для обоих генераторов)
+      summary: Check Video Generation Status
+      description: Check the status of a video generation task
       security:
         - BearerAuth: []
       parameters:
@@ -163,10 +163,10 @@ paths:
           required: true
           schema:
             type: string
-          description: Идентификатор задачи, полученный при запросе на генерацию видео
+          description: Task ID received from the video generation request
       responses:
         '200':
-          description: Информация о статусе выполнения задачи
+          description: Task status information
           content:
             application/json:
               schema:
@@ -174,14 +174,14 @@ paths:
                 properties:
                   id:
                     type: string
-                    description: Идентификатор задачи
+                    description: Task ID
                   status:
                     type: string
                     enum: [IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED]
-                    description: Статус выполнения задачи
+                    description: Task status
                   output:
                     type: object
-                    description: Результат выполнения (присутствует только при status=COMPLETED)
+                    description: Result (present only when status=COMPLETED)
               examples:
                 inProgress:
                   value:
@@ -199,4 +199,4 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: API ключ в формате Bearer токена (заменить на актуальный ключ)
+      description: API Bearer token
