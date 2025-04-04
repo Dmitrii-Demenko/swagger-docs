@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: API генерации видео с аватарами
+  description: API для генерации видео с аватарами и проверки статуса генерации
+  version: 1.0.0
+servers:
+  - url: https://api.runpod.ai/v2/{serviceId}
+    variables:
+      serviceId:
+        default: 6iejsqjva1cp1o
+        description: ID сервиса (например, 6iejsqjva1cp1o)
+paths:
+  /run:
+    post:
+      summary: Запрос на генерацию видео
+      description: Отправляет запрос на генерацию видео с выбранным аватаром и текстом
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  required:
+                    - avatar
+                    - text
+                  properties:
+                    avatar:
+                      type: string
+                      enum: [irina, ann, malyshko, ksenija]
+                      description: Тип аватара для использования в видео
+                    text:
+                      type: string
+                      description: Текст, который будет произнесен аватаром
+                    format:
+                      type: string
+                      enum: [mp4, webm, mov]
+                      default: mp4
+                      description: Формат выходного видео
+                    response_format:
+                      type: string
+                      enum: [url, base64]
+                      default: url
+                      description: Формат ответа (URL или Base64)
+              required:
+                - input
+            examples:
+              example1:
+                value:
+                  input:
+                    avatar: irina
+                    text: Привет это тестовый запрос для того что бы проверить работоспособность сервера
+                    response_format: url
+                    format: mov
+      responses:
+        '200':
+          description: Успешный запрос на генерацию видео
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Идентификатор задачи
+                  status:
+                    type: string
+                    enum: [IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED]
+                    description: Статус выполнения задачи
+              examples:
+                example1:
+                  value:
+                    id: 6cdbf7a7-fa96-48c9-83db-33f4880c58f6-e1
+                    status: IN_QUEUE
+  /status/{taskId}:
+    get:
+      summary: Проверка статуса генерации видео
+      description: Получает текущий статус задачи по её идентификатору
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Идентификатор задачи, полученный при запросе на генерацию видео
+      responses:
+        '200':
+          description: Информация о статусе выполнения задачи
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Идентификатор задачи
+                  status:
+                    type: string
+                    enum: [IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED]
+                    description: Статус выполнения задачи
+                  output:
+                    type: object
+                    description: Результат выполнения (присутствует только при status=COMPLETED)
+              examples:
+                inProgress:
+                  value:
+                    id: 6cdbf7a7-fa96-48c9-83db-33f4880c58f6-e1
+                    status: IN_PROGRESS
+                completed:
+                  value:
+                    id: 6cdbf7a7-fa96-48c9-83db-33f4880c58f6-e1
+                    status: COMPLETED
+                    output:
+                      url: https://example.com/video.mp4
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: API ключ в формате Bearer токена (например, YNL1QT5BVCOWOC05OYQOGDACUTRPHY3IOWX0C5OC)
