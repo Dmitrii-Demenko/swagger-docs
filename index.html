@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>API генерации видео с аватарами</title>
+    <title>Video Generation API Documentation</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
@@ -10,52 +10,10 @@
         margin: 0;
         padding: 0;
       }
-      .info-box {
-        background-color: #f0f8ff;
-        border-left: 4px solid #1e90ff;
-        padding: 15px;
-        margin: 20px 0;
-        border-radius: 4px;
-      }
-      .warning-box {
-        background-color: #fff5e6;
-        border-left: 4px solid #ff9800;
-        padding: 15px;
-        margin: 20px 0;
-        border-radius: 4px;
-      }
     </style>
   </head>
   <body>
-    <div class="warning-box" id="auth-warning" style="display:none; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; text-align: center;">
-      <strong>Внимание!</strong> Для использования API необходимо заменить значения serviceId и ключа авторизации.
-    </div>
-    <div class="info-box" style="margin: 20px;">
-      <h2>Документация API генерации видео с аватарами</h2>
-      <p>Эта документация описывает два различных генератора видео:</p>
-      <ul>
-        <li><strong>Генератор 1:</strong> Генерирует видео с аватаром ann и поддерживает настройку голоса</li>
-        <li><strong>Генератор 2:</strong> Поддерживает более широкий выбор аватаров (irina, ann, malyshko, ksenija)</li>
-      </ul>
-      <p>Перед использованием API необходимо:</p>
-      <ol>
-        <li>Заменить значение <code>serviceId</code> на актуальный ID сервиса</li>
-        <li>Использовать действительный ключ авторизации в заголовке запроса</li>
-      </ol>
-    </div>
     <redoc spec-url='swagger.yaml'></redoc>
     <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Проверка на наличие плейсхолдеров в спецификации
-        fetch('swagger.yaml')
-          .then(response => response.text())
-          .then(text => {
-            if (text.includes('serviceId') || text.includes('заменить на актуальный')) {
-              document.getElementById('auth-warning').style.display = 'block';
-            }
-          });
-      });
-    </script>
   </body>
 </html> 
