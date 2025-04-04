@@ -7,13 +7,18 @@ servers:
   - url: https://api.runpod.ai/v2/{serviceId}
     variables:
       serviceId:
-        default: 6iejsqjva1cp1o
-        description: ID сервиса (например, 6iejsqjva1cp1o)
+        default: serviceId
+        description: ID сервиса для второго генератора видео (заменить на актуальный ID)
+  - url: https://api.runpod.ai/v2/{serviceId}
+    variables:
+      serviceId:
+        default: serviceId
+        description: ID сервиса для первого генератора видео (заменить на актуальный ID)
 paths:
   /run:
     post:
-      summary: Запрос на генерацию видео
-      description: Отправляет запрос на генерацию видео с выбранным аватаром и текстом
+      summary: Запрос на генерацию видео (Генератор 2)
+      description: Отправляет запрос на генерацию видео с выбранным аватаром и текстом через второй генератор
       security:
         - BearerAuth: []
       requestBody:
@@ -76,10 +81,80 @@ paths:
                   value:
                     id: 6cdbf7a7-fa96-48c9-83db-33f4880c58f6-e1
                     status: IN_QUEUE
+  /run-generator1:
+    post:
+      summary: Запрос на генерацию видео (Генератор 1)
+      description: Отправляет запрос на генерацию видео с выбранным аватаром, текстом и голосом через первый генератор
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  required:
+                    - avatar
+                    - text
+                  properties:
+                    avatar:
+                      type: string
+                      enum: [ann]
+                      description: Тип аватара для использования в видео
+                    text:
+                      type: string
+                      description: Текст, который будет произнесен аватаром
+                    format:
+                      type: string
+                      enum: [mp4]
+                      default: mp4
+                      description: Формат выходного видео
+                    response_format:
+                      type: string
+                      enum: [url, base64]
+                      default: base64
+                      description: Формат ответа (URL или Base64)
+                    voice:
+                      type: string
+                      description: Идентификатор голоса для озвучивания (например, XB0fDUnXU5powFXDhCwa)
+              required:
+                - input
+            examples:
+              example1:
+                value:
+                  input:
+                    avatar: ann
+                    text: Ваш текст для озвучивания
+                    response_format: base64
+                    format: mp4
+                    voice: voice_id
+      responses:
+        '200':
+          description: Успешный запрос на генерацию видео
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Идентификатор задачи
+                  status:
+                    type: string
+                    enum: [IN_QUEUE, IN_PROGRESS, COMPLETED, FAILED]
+                    description: Статус выполнения задачи
+              examples:
+                example1:
+                  value:
+                    id: task-id-example
+                    status: IN_QUEUE
   /status/{taskId}:
     get:
       summary: Проверка статуса генерации видео
-      description: Получает текущий статус задачи по её идентификатору
+      description: Получает текущий статус задачи по её идентификатору (работает для обоих генераторов)
       security:
         - BearerAuth: []
       parameters:
@@ -124,4 +199,4 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: API ключ в формате Bearer токена (например, YNL1QT5BVCOWOC05OYQOGDACUTRPHY3IOWX0C5OC)
+      description: API ключ в формате Bearer токена (заменить на актуальный ключ)
